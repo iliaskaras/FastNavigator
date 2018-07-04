@@ -25,7 +25,7 @@ public class HTTPDataHandler {
     public HTTPDataHandler(){
     }
 
-    public void GetHTTPData(String urlString){
+    public String GetHTTPData(String urlString){
         try{
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
@@ -55,6 +55,7 @@ public class HTTPDataHandler {
             e.printStackTrace();
         }
 
+        return stream;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
