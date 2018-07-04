@@ -2,26 +2,25 @@ package Model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by ILIAS on 3/7/2018.
  */
 
 public class Dustbin {
 
-    @SerializedName("$location")
+//    @SerializedName("$location")
     private String location;
 
-    @SerializedName("$oid")
+//    @SerializedName("$oid")
     private Id _id;
 
-    private List<Coordinate> coordinates = new ArrayList<Coordinate>();
+//    @SerializedName("$coordinates")
+    private Coordinates coordinates = new Coordinates();
 
-    public Dustbin(String location, List<Coordinate> coordinates) {
+    public Dustbin(String location, Coordinates coordinates,  Id _id) {
         this.location = location;
         this.coordinates = coordinates;
+        this._id = _id;
         try{
 
         }catch(Exception ex){
@@ -45,11 +44,11 @@ public class Dustbin {
         this.location = location;
     }
 
-    public List<Coordinate> getCoordinates() {
+    public Coordinates getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(List<Coordinate> coordinates) {
+    public void setCoordinates(Coordinates coordinates) {
         this.coordinates = coordinates;
     }
 }
