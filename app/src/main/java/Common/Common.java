@@ -10,7 +10,7 @@ public class Common {
 
     private static String DB_NAME = "navigation_map";
     private static String COLLECTION_NAME = "dustbin";
-    public static String API_KEY = "waqGYV92hh5RC-PbUb8VI_TFkXnKxGZH";
+    private static String API_KEY = "waqGYV92hh5RC-PbUb8VI_TFkXnKxGZH";
 
 
     public static String getAddressSingle(Dustbin dustbin){
