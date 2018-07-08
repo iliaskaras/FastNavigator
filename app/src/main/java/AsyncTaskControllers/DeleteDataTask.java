@@ -9,11 +9,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-
-import Common.Common;
 import Model.Dustbin;
 import Services.DeleteService;
-import gr.onetouchaway.findeverything.fast_navigator.MainActivity;
 
 /** Delete Data */
 public class DeleteDataTask extends AsyncTask<String,String,String> {
@@ -44,11 +41,6 @@ public class DeleteDataTask extends AsyncTask<String,String,String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 
-        /** Refresh Data */
-
-//        new GetData(progressDialog,mContext).execute(Common.getAddressAPI());
-//
-//        progressDialog.dismiss();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -58,7 +50,6 @@ public class DeleteDataTask extends AsyncTask<String,String,String> {
 
         DeleteService deleteService = new DeleteService();
         String json = "{\"location\":\""+this.dustbin.getLocation()+"\"}";
-//        String json = "{\"_id\":{\"$oid\":\""+this.dustbin.get_id()+"\"}";
         deleteService.DeleteHTTPData(urlString,json);
 
         return "";
