@@ -31,7 +31,7 @@ import AsyncTaskControllers.GetData;
 public class MainActivity extends AppCompatActivity implements DownloadTaskListener {
 
     ListView listView;
-    Button btnAdd,btnDelete,btnEdit;
+    Button btnAdd,btnDelete,btnEdit,btnGoogleMap;
     EditText editUser;
     Dustbin dustbinSelected = null;
     List<Dustbin> dustbins = new ArrayList<Dustbin>();
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
         btnAdd = (Button)findViewById(R.id.btnAdd);
         btnEdit = (Button)findViewById(R.id.btnEdit);
         btnDelete = (Button)findViewById(R.id.btnDelete);
+        btnGoogleMap = (Button)findViewById(R.id.btnGoogleMap);
         editUser = (EditText) findViewById(R.id.editUsername);
 
         progressDialog = new ProgressDialog(MainActivity.this);
@@ -111,6 +112,14 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
                 getData = new GetData(progressDialog, MainActivity.this);
                 getData.mListener = MainActivity.this;
                 getData.execute(Common.getAddressAPI());
+
+            }
+        });
+
+        btnGoogleMap.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
 
             }
         });
