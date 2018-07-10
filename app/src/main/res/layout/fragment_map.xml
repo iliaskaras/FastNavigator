@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="gr.onetouchaway.findeverything.fast_navigator.MapsActivity">
+    tools:context="gr.onetouchaway.findeverything.fast_navigator.MapsMarkerActivity">
 
     <fragment
         android:id="@+id/map"
