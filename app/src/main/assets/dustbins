@@ -1,0 +1,118 @@
+{
+  "dustbins": [
+
+    {
+      "_id": {
+        "$oid": "5b3d02f3fb6fc03328fa0e71"
+      },
+      "location": "Serres",
+      "coordinates": {
+        "lat": 41.092083,
+        "longitude": 23.541016
+      }
+    }
+
+    ,
+
+    {
+      "_id": {
+        "$oid": "5b3d032bfb6fc03328fa0e87"
+      },
+      "location": "Provatas",
+      "coordinates": {
+        "lat": 41.068238,
+        "longitude": 23.390686
+      }
+    }
+
+  ,
+    {
+      "_id": {
+        "$oid": "5b3d0349fb6fc03328fa0e99"
+      },
+      "location": "K. Mitrousi",
+      "coordinates": {
+        "lat": 41.05868,
+        "longitude": 23.457547
+      }
+    }
+
+  ,
+    {
+      "_id": {
+        "$oid": "5b3d036bfb6fc03328fa0ea0"
+      },
+      "location": "Koumaria",
+      "coordinates": {
+        "lat": 41.016434,
+        "longitude": 23.434656
+      }
+    }
+  ,
+    {
+      "_id": {
+        "$oid": "5b3d039dfb6fc03328fa0ebf"
+      },
+      "location": "Skoutari",
+      "coordinates": {
+        "lat": 41.020032,
+        "longitude": 23.520701
+      }
+    }
+  ,
+    {
+      "_id": {
+        "$oid": "5b3d03c1fb6fc03328fa0f82"
+      },
+      "location": "Adelfiko",
+      "coordinates": {
+        "lat": 41.014645,
+        "long": 23.457354
+      }
+    }
+  ,
+    {
+      "_id": {
+        "$oid": "5b3d03e8fb6fc03328fa0fa2"
+      },
+      "location": "Ag. Eleni",
+      "coordinates": {
+        "lat": 41.003545,
+        "longitude": 23.559196
+      }
+    }
+  ,
+    {
+      "_id": {
+        "$oid": "5b3d0406fb6fc03328fa0fbe"
+      },
+      "location": "Peponia",
+      "coordinates": {
+        "lat": 40.988154,
+        "longitude": 23.516756
+      }
+    }
+  ,
+    {
+      "_id": {
+        "$oid": "5b3f59045d0e6576eb4cc782"
+      },
+      "location": "A. Kamila",
+      "coordinates": {
+        "lat": 41.05832,
+        "longitude": 23.424134
+      }
+    }
+  ,
+    {
+      "_id": {
+        "$oid": "5b3f57805d0e6576eb4cc42e"
+      },
+      "location": "K. Kamila",
+      "coordinates": {
+        "lat": 41.020431,
+        "longitude": 23.483293
+      }
+    }
+  ]
+}
