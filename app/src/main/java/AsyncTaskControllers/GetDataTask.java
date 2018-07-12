@@ -11,14 +11,14 @@ import Services.GetService;
 
 
 /** Process Data */
-public class GetData extends AsyncTask<String,Void,String> {
+public class GetDataTask extends AsyncTask<String,Void,String> {
 
 
     ProgressDialog progressDialog;
 
     public DownloadTaskListener mListener;
 
-    public GetData(ProgressDialog progressDialog, Context mContext) {
+    public GetDataTask(ProgressDialog progressDialog, Context mContext) {
         this.progressDialog = progressDialog;
     }
 

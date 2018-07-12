@@ -34,6 +34,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <Button
+            android:id="@+id/btnLoadYourFile"
+            android:text="Show your Locations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
             android:id="@+id/btnEdit"
             android:text="Edit"
             android:layout_width="match_parent"
