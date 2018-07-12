@@ -19,7 +19,7 @@ public class PutDataTask extends AsyncTask<String,String,String> {
     Dustbin dustbinSelected;
 
     private Context mContext;
-    private GetData getData;
+    private GetDataTask getData;
     public DownloadTaskListener mListener;
 
     public PutDataTask(ProgressDialog progressDialog, Context mContext, Dustbin dustbinSelected) {
