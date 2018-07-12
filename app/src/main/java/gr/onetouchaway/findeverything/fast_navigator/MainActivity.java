@@ -9,6 +9,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import Adapters.CustomAdapter;
@@ -20,7 +22,7 @@ import Controllers.FileReaderController;
 import Controllers.JsonController;
 import Controllers.FileWriterController;
 import Model.Dustbin;
-import AsyncTaskControllers.GetData;
+import AsyncTaskControllers.GetDataTask;
 
 public class MainActivity extends AppCompatActivity implements DownloadTaskListener, View.OnClickListener {
 
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
     private EditText editUser;
     private Dustbin dustbinSelected = null;
     private List<Dustbin> dustbins = new ArrayList<Dustbin>();
-    private GetData getData;
+    private GetDataTask getData;
     private ProgressDialog progressDialog;
 
     @Override
@@ -40,11 +42,13 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
         Button btnEdit = (Button) findViewById(R.id.btnEdit);
         Button btnDelete = (Button) findViewById(R.id.btnDelete);
         Button btnGoogleMap = (Button) findViewById(R.id.btnGoogleMap);
+        Button btnShowUserLocations = (Button) findViewById(R.id.btnLoadYourFile);
+
         listView = (ListView)findViewById(R.id.listView);
         editUser = (EditText) findViewById(R.id.editUsername);
         progressDialog = new ProgressDialog(MainActivity.this);
 
-        getData = new GetData(progressDialog, MainActivity.this);
+        getData = new GetDataTask(progressDialog, MainActivity.this);
         getData.mListener = this;
         getData.execute(Common.getAddressAPI());
 
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
         btnAdd.setOnClickListener(this);
         btnEdit.setOnClickListener(this);
         btnDelete.setOnClickListener(this);
+        btnShowUserLocations.setOnClickListener(this);
 //        btnAdd.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v) {
@@ -123,6 +128,18 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
         MainActivity.this.startActivity(myIntent);
     }
 
+    private void startAddDustbinActivity(){
+        Intent myIntent = new Intent(MainActivity.this, AddNewDustbinActivity.class);
+        MainActivity.this.startActivity(myIntent);
+    }
+
+    private void loadUserLocations(){
+        String result = null;
+        FileReaderController fileReaderController = new FileReaderController(getApplicationContext());
+        result = fileReaderController.readUserDistancesFile();
+
+    }
+
     private void asyncTaskFactory(View view){
         switch (view.getId()){
             case R.id.btnAdd:
@@ -134,18 +151,20 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
 //                getData = new GetData(progressDialog, MainActivity.this);
 //                getData.mListener = MainActivity.this;
 //                getData.execute(Common.getAddressAPI());
-                JsonController jsonController = new JsonController(getAssets());
-                List<Dustbin> dustbins = jsonController.getDustbinLists();
-                for (int i = 0; i < dustbins.size(); i++) {
-                    Dustbin dustbinTest = dustbins.get(i);
-                }
+
+//                JsonController jsonController = new JsonController(getAssets());
+//                List<Dustbin> dustbins = jsonController.getDustbinLists();
+//                for (int i = 0; i < dustbins.size(); i++) {
+//                    Dustbin dustbinTest = dustbins.get(i);
+//                }
+                startAddDustbinActivity();
                 break;
             case R.id.btnEdit:
                 PutDataTask putDataTask = new PutDataTask(progressDialog, MainActivity.this, dustbinSelected);
                 putDataTask.mListener = MainActivity.this;
                 putDataTask.execute(Common.getAddressSingle(dustbinSelected));
 
-                getData = new GetData(progressDialog, MainActivity.this);
+                getData = new GetDataTask(progressDialog, MainActivity.this);
                 getData.mListener = MainActivity.this;
                 getData.execute(Common.getAddressAPI());
                 break;
@@ -154,9 +173,12 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
                 deleteDataTask.mListener = MainActivity.this;
                 deleteDataTask.execute(Common.getAddressSingle(dustbinSelected));
 
-                getData = new GetData(progressDialog, MainActivity.this);
+                getData = new GetDataTask(progressDialog, MainActivity.this);
                 getData.mListener = MainActivity.this;
                 getData.execute(Common.getAddressAPI());
+                break;
+            case R.id.btnLoadYourFile:
+                loadUserLocations();
                 break;
             default:
                 break;
@@ -179,8 +201,8 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
                 FileReaderController fileReaderController = new FileReaderController(getApplicationContext());
                 dustbins = jsonController.getDustbinLists(downloadedData);
                 CustomAdapter adapter = new CustomAdapter(getApplicationContext(),dustbins);
-                fileWriterController.writeTxtToResources(dustbins);
-                String result = fileReaderController.readTxtToResources();
+                fileWriterController.saveTxtFile(dustbins);
+                String result = fileReaderController.readTxtFile("data.txt");
 
 
                 listView.setAdapter(adapter);
