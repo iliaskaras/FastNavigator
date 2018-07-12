@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+
+import Model.Dustbin;
 import Services.PostService;
 
 /**
@@ -15,16 +17,23 @@ public class PostDataTask extends AsyncTask<String,String,String> {
 
     ProgressDialog progressDialog;
     String userName;
-    private Context mContext;
-    private GetData mClient;
-    private String mAction;
+    private Dustbin dustbin;
 
     public DownloadTaskListener mListener;
 
-    public PostDataTask(ProgressDialog progressDialog, Context mContext, String userName) {
+    public PostDataTask(ProgressDialog progressDialog, String userName) {
         this.progressDialog = progressDialog;
         this.userName = userName;
-        this.mContext = mContext;
+    }
+
+    public PostDataTask(ProgressDialog progressDialog, String dustbinLocation, String dustbinLatitude, String dustbinLongitude) {
+        this.progressDialog = progressDialog;
+
+    }
+
+    public PostDataTask(ProgressDialog progressDialog, Dustbin dustbin) {
+        this.progressDialog = progressDialog;
+        this.dustbin = dustbin;
     }
 
     @Override
@@ -40,6 +49,12 @@ public class PostDataTask extends AsyncTask<String,String,String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 
+        if(mListener != null)
+        {
+            mListener.onDownloadFinish(s);
+
+        }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -48,7 +63,10 @@ public class PostDataTask extends AsyncTask<String,String,String> {
         String urlString = params[0];
 
         PostService postService = new PostService();
-        String json = "{\"user\":\""+this.userName+"\"}";
+        String json = "{\"location\":\""+this.dustbin.getLocation()+"\"," +
+                "\"coordinates\":{" +
+                "\"lat\":"+this.dustbin.getCoordinates().getLat()+"," +
+                "\"longitude\":"+this.dustbin.getCoordinates().getLongitude()+"}}";
 
         postService.PostHTTPData(urlString,json);
 

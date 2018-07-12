@@ -19,7 +19,7 @@ public class DeleteDataTask extends AsyncTask<String,String,String> {
     Dustbin dustbin;
 
     private Context mContext;
-    private GetData getData;
+    private GetDataTask getData;
     public DownloadTaskListener mListener;
 
     public DeleteDataTask(ProgressDialog progressDialog, Context mContext, Dustbin dustbin) {
