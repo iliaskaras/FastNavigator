@@ -4,23 +4,23 @@ package Exceptions;
  * Created by ILIAS on 3/7/2018.
  */
 
-public class CoordinateException extends Exception {
+public class MyCoordinateException extends Exception {
 
     private String detailMessage = null;
 
-    public CoordinateException() {
+    public MyCoordinateException() {
 
     }
 
-    public CoordinateException(String message) {
+    public MyCoordinateException(String message) {
         super(message);
     }
 
-    public CoordinateException(Throwable cause) {
+    public MyCoordinateException(Throwable cause) {
         super(cause);
     }
 
-    public CoordinateException(String message, Throwable cause) {
+    public MyCoordinateException(String message, Throwable cause) {
         super (message, cause);
     }
 

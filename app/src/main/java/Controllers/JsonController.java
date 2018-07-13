@@ -17,6 +17,7 @@ import Model.Dustbin;
  */
 
 public class JsonController {
+    final static String TAG = JsonController.class.getName();
     private AssetManager assetManager;
 
     public JsonController(AssetManager assetManager) {
@@ -52,16 +53,16 @@ public class JsonController {
 //                // fetch location, id, coordinates and store it in dustbin object
 //                dustbin.setLocation(dustbinDetail.get("location").toString());
 //                _id.setOid(dustbinDetail.get("_id").toString());
-//                coordinates.setLat((Double) dustbinDetail.get("lat"));
-//                coordinates.setLongitude((Double) dustbinDetail.get("longitude"));
+//                coordinates.setStringLat((Double) dustbinDetail.get("lat"));
+//                coordinates.setStringLongitude((Double) dustbinDetail.get("longitude"));
 //
 //                dustbin.setCoordinates(coordinates);
 //                dustbin.set_id(_id);
 //
 //                dustbins.add(dustbin);
 //            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (JSONException ex) {
+            ex.printStackTrace();
         }
 
         return dustbins;
@@ -87,16 +88,16 @@ public class JsonController {
 //                // fetch location, id, coordinates and store it in dustbin object
 //                dustbin.setLocation(dustbinDetail.get("location").toString());
 //                _id.setOid(dustbinDetail.get("_id").toString());
-//                coordinates.setLat((Double) dustbinDetail.get("lat"));
-//                coordinates.setLongitude((Double) dustbinDetail.get("longitude"));
+//                coordinates.setStringLat((Double) dustbinDetail.get("lat"));
+//                coordinates.setStringLongitude((Double) dustbinDetail.get("longitude"));
 //
 //                dustbin.setCoordinates(coordinates);
 //                dustbin.set_id(_id);
 //
 //                dustbins.add(dustbin);
 //            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return dustbins;

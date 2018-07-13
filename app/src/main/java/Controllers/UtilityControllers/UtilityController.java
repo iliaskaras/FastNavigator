@@ -1,4 +1,4 @@
-package Controllers;
+package Controllers.UtilityControllers;
 
 import Model.Coordinates;
 import Model.Dustbin;
