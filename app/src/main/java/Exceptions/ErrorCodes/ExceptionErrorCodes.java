@@ -4,14 +4,12 @@ package Exceptions.ErrorCodes;
  * Created by ILIAS on 13/7/2018.
  */
 
-public enum ExceptionErrorCodes {
+public enum ExceptionErrorCodes implements IErrorCodeConstant {
 
-//    DATABASE(0, "A database error has occured."),
-//    DUPLICATE_USER(1, "This user already exists.");
-
-    WRONG_COORDINATES(2, "You gave wrong coordinates."),
-    WRONG_LAT(3, "You gave invalid latitude."),
-    WRONG_LONG(3, "You gave invalid longitude.");
+    WRONG_COORDINATES(CODE_WRONG_COORDINATES, "You gave wrong coordinates."),
+    WRONG_LAT(CODE_WRONG_LAT, "You gave invalid latitude."),
+    WRONG_LONG(CODE_WRONG_LONG, "You gave invalid longitude."),
+    WRONG_LOCATION(CODE_WRONG_LOCATION, "You gave invalid location.");
 
     private final int errorCode;
     private final String errorMessage;
