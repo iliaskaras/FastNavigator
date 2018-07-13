@@ -19,7 +19,6 @@ import gr.onetouchaway.findeverything.fast_navigator.R;
 
 public class FileReaderController {
     private Context mContext;
-    final static String fileName = "data.txt";
     final static String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Controllers/";
     final static String TAG = FileReaderController.class.getName();
 
@@ -32,48 +31,65 @@ public class FileReaderController {
 
     public String readTxtFile(String fileName){
         String line = null;
+        FileInputStream fileInputStream = null;
+        BufferedReader bufferedReader = null;
 
         try {
-            FileInputStream fileInputStream = new FileInputStream (new File(path + fileName));
+            fileInputStream = new FileInputStream (new File(path + fileName));
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            bufferedReader = new BufferedReader(inputStreamReader);
             StringBuilder stringBuilder = new StringBuilder();
 
             while ( (line = bufferedReader.readLine()) != null )
             {
                 stringBuilder.append(line + System.getProperty("line.separator"));
             }
-            fileInputStream.close();
             line = stringBuilder.toString();
-
-            bufferedReader.close();
         }
         catch(FileNotFoundException ex) {
             Log.d(TAG, ex.getMessage());
         }
         catch(IOException ex) {
             Log.d(TAG, ex.getMessage());
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                    bufferedReader.close();
+                } catch (IOException ex) {
+                    Log.d(TAG, ex.getMessage());
+                }
+            }
         }
+
         return line;
     }
 
     public String readUserDistancesFile() {
         String line = null;
-
-        InputStream inputStream = this.mContext.getResources().openRawResource(R.raw.user_distances);
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader = null;
 
         try {
+            InputStream inputStream = this.mContext.getResources().openRawResource(R.raw.user_distances);
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder stringBuilder = new StringBuilder();
+
             while ( (line = bufferedReader.readLine()) != null )
             {
                 stringBuilder.append(line + System.getProperty("line.separator"));
             }
 
             line = stringBuilder.toString();
-            bufferedReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException ex) {
+                    Log.d(TAG, ex.getMessage());
+                }
+            }
         }
 
         return line;
