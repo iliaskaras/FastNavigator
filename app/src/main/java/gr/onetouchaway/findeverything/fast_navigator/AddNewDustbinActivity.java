@@ -4,13 +4,17 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import Common.Common;
 import AsyncTaskControllers.DownloadTaskListener;
 import AsyncTaskControllers.PostDataTask;
-import Controllers.UtilityController;
+import Controllers.UtilityControllers.DustbinUtilController;
+import Controllers.UtilityControllers.UtilityController;
+import Exceptions.MyCoordinateException;
+import Exceptions.MyDustbinException;
 import Model.Dustbin;
 
 /**
@@ -18,6 +22,7 @@ import Model.Dustbin;
  */
 
 public class AddNewDustbinActivity extends AppCompatActivity implements DownloadTaskListener, View.OnClickListener  {
+    final static String TAG = AddNewDustbinActivity.class.getName();
 
     private EditText dustbinLocation;
     private EditText dustbinLongitude;
@@ -49,10 +54,17 @@ public class AddNewDustbinActivity extends AppCompatActivity implements Download
     private void addDustbin(){
 
         UtilityController utilityController = new UtilityController();
-        Dustbin dustbin = utilityController.createDustbin(
-                this.dustbinLocation.getText().toString(),
-                this.dustbinLatitude.getText().toString(),
-                this.dustbinLongitude.getText().toString());
+        Dustbin dustbin = null;
+        try {
+            dustbin = utilityController.createDustbin(
+                    this.dustbinLocation.getText().toString(),
+                    this.dustbinLatitude.getText().toString(),
+                    this.dustbinLongitude.getText().toString());
+        } catch (MyCoordinateException ex) {
+            Log.d(TAG, ex.getMessage());
+        } catch (MyDustbinException ex){
+            Log.d(TAG, ex.getMessage());
+        }
 
         PostDataTask postDataTask = new PostDataTask(progressDialog, dustbin);
 
