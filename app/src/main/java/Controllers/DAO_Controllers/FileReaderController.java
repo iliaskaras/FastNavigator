@@ -1,17 +1,7 @@
 package Controllers.DAO_Controllers;
 
 import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import gr.onetouchaway.findeverything.fast_navigator.R;
+import DAO.FileReader;
 
 /**
  * Created by ILIAS on 11/7/2018.
@@ -19,8 +9,6 @@ import gr.onetouchaway.findeverything.fast_navigator.R;
 
 public class FileReaderController {
     private Context mContext;
-    final static String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Controllers/";
-    final static String TAG = FileReaderController.class.getName();
 
     public FileReaderController() {
     }
@@ -30,67 +18,19 @@ public class FileReaderController {
     }
 
     public String readTxtFile(String fileName){
+        FileReader fileReader = new FileReader();
         String line = null;
-        FileInputStream fileInputStream = null;
-        BufferedReader bufferedReader = null;
 
-        try {
-            fileInputStream = new FileInputStream (new File(path + fileName));
-            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-            bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while ( (line = bufferedReader.readLine()) != null )
-            {
-                stringBuilder.append(line + System.getProperty("line.separator"));
-            }
-            line = stringBuilder.toString();
-        }
-        catch(FileNotFoundException ex) {
-            Log.d(TAG, ex.getMessage());
-        }
-        catch(IOException ex) {
-            Log.d(TAG, ex.getMessage());
-        } finally {
-            if (fileInputStream != null) {
-                try {
-                    fileInputStream.close();
-                    bufferedReader.close();
-                } catch (IOException ex) {
-                    Log.d(TAG, ex.getMessage());
-                }
-            }
-        }
+        line = fileReader.readTxtFile(fileName);
 
         return line;
     }
 
     public String readUserDistancesFile() {
+        FileReader fileReader = new FileReader();
         String line = null;
-        BufferedReader bufferedReader = null;
 
-        try {
-            InputStream inputStream = this.mContext.getResources().openRawResource(R.raw.user_distances);
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while ( (line = bufferedReader.readLine()) != null )
-            {
-                stringBuilder.append(line + System.getProperty("line.separator"));
-            }
-
-            line = stringBuilder.toString();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ex) {
-                    Log.d(TAG, ex.getMessage());
-                }
-            }
-        }
+        line = fileReader.readUserDistancesFile();
 
         return line;
     }
