@@ -9,9 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import Common.Common;
-import AsyncTaskControllers.DownloadTaskListener;
-import AsyncTaskControllers.PostDataTask;
-import Controllers.UtilityControllers.DustbinUtilController;
+import Controllers.AsyncTaskControllers.DownloadTaskListener;
+import Controllers.AsyncTaskControllers.PostDataTaskController;
 import Controllers.UtilityControllers.UtilityController;
 import Exceptions.MyCoordinateException;
 import Exceptions.MyDustbinException;
@@ -66,7 +65,7 @@ public class AddNewDustbinActivity extends AppCompatActivity implements Download
             Log.d(TAG, ex.getMessage());
         }
 
-        PostDataTask postDataTask = new PostDataTask(progressDialog, dustbin);
+        PostDataTaskController postDataTask = new PostDataTaskController(progressDialog, dustbin);
 
         postDataTask.mListener = AddNewDustbinActivity.this;
         postDataTask.execute(Common.getAddressAPI());
@@ -81,9 +80,6 @@ public class AddNewDustbinActivity extends AppCompatActivity implements Download
             {
                 /** Done Process */
                 /** Use Gson to parse Json to Class*/
-//                Gson gson = new Gson();
-//                Type listType = new TypeToken<List<Dustbin>>(){}.getType();
-//                dustbins = gson.fromJson(downloadedData,listType);
                 progressDialog.dismiss();
 
             }
