@@ -42,25 +42,6 @@ public class JsonController {
             Type listType = new TypeToken<List<Dustbin>>(){}.getType();
             dustbins = gson.fromJson(dustbinArray.toString(),listType);
 
-//            // implement for loop for getting users list data
-//            for (int i = 0; i < dustbinArray.length(); i++) {
-//                // create empty dustbin object to fill
-//                Dustbin dustbin = new Dustbin();
-//                Id _id = new Id();
-//                Coordinates coordinates = new Coordinates();
-//                // create a JSONObject for fetching single dustbin data
-//                JSONObject dustbinDetail = dustbinArray.getJSONObject(i);
-//                // fetch location, id, coordinates and store it in dustbin object
-//                dustbin.setLocation(dustbinDetail.get("location").toString());
-//                _id.setOid(dustbinDetail.get("_id").toString());
-//                coordinates.setStringLat((Double) dustbinDetail.get("lat"));
-//                coordinates.setStringLongitude((Double) dustbinDetail.get("longitude"));
-//
-//                dustbin.setCoordinates(coordinates);
-//                dustbin.set_id(_id);
-//
-//                dustbins.add(dustbin);
-//            }
         } catch (JSONException ex) {
             ex.printStackTrace();
         }
@@ -68,6 +49,7 @@ public class JsonController {
         return dustbins;
     }
 
+    //TODO make method generic
     public List<Dustbin> getDustbinLists(String jsonString){
         List<Dustbin> dustbins = new ArrayList<>();
         try {
@@ -77,25 +59,6 @@ public class JsonController {
             Type listType = new TypeToken<List<Dustbin>>(){}.getType();
             dustbins = gson.fromJson(jsonString,listType);
 
-//            // implement for loop for getting users list data
-//            for (int i = 0; i < dustbinArray.length(); i++) {
-//                // create empty dustbin object to fill
-//                Dustbin dustbin = new Dustbin();
-//                Id _id = new Id();
-//                Coordinates coordinates = new Coordinates();
-//                // create a JSONObject for fetching single dustbin data
-//                JSONObject dustbinDetail = dustbinArray.getJSONObject(i);
-//                // fetch location, id, coordinates and store it in dustbin object
-//                dustbin.setLocation(dustbinDetail.get("location").toString());
-//                _id.setOid(dustbinDetail.get("_id").toString());
-//                coordinates.setStringLat((Double) dustbinDetail.get("lat"));
-//                coordinates.setStringLongitude((Double) dustbinDetail.get("longitude"));
-//
-//                dustbin.setCoordinates(coordinates);
-//                dustbin.set_id(_id);
-//
-//                dustbins.add(dustbin);
-//            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
