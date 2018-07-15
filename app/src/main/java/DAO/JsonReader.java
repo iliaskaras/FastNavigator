@@ -1,6 +1,8 @@
 package DAO;
 
 import android.content.res.AssetManager;
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -9,24 +11,33 @@ import java.io.InputStream;
  */
 
 public class JsonReader {
+    final static String TAG = JsonReader.class.getName();
 
-
-    public JsonReader() {
-    }
+    public JsonReader() {}
 
     public String loadJSONFromAsset(AssetManager assetManager) {
         String json = null;
+        InputStream inputStream = null;
         try {
-            InputStream is = assetManager.open("dustbins");
-            int size = is.available();
+            inputStream = assetManager.open("dustbins");
+            int size = inputStream.available();
             byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
+            inputStream.read(buffer);
+            inputStream.close();
             json = new String(buffer, "UTF-8");
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ex) {
+                    Log.d(TAG, ex.getMessage());
+                }
+            }
         }
+
         return json;
     }
 
