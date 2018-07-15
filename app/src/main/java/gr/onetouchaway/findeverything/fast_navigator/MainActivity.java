@@ -10,19 +10,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import Adapters.CustomAdapter;
-import AsyncTaskControllers.DeleteDataTask;
-import AsyncTaskControllers.DownloadTaskListener;
-import AsyncTaskControllers.PutDataTask;
+import Controllers.AsyncTaskControllers.DeleteDataTaskController;
+import Controllers.AsyncTaskControllers.DownloadTaskListener;
+import Controllers.AsyncTaskControllers.PutDataTaskController;
 import Common.Common;
-import Controllers.FileReaderController;
-import Controllers.JsonController;
-import Controllers.FileWriterController;
+import Controllers.DAO_Controllers.FileReaderController;
+import Controllers.DAO_Controllers.JsonController;
+import Controllers.DAO_Controllers.FileWriterController;
 import Model.Dustbin;
-import AsyncTaskControllers.GetDataTask;
+import Controllers.AsyncTaskControllers.GetDataTaskController;
 
 public class MainActivity extends AppCompatActivity implements DownloadTaskListener, View.OnClickListener {
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
     private EditText editUser;
     private Dustbin dustbinSelected = null;
     private List<Dustbin> dustbins = new ArrayList<Dustbin>();
-    private GetDataTask getData;
+    private GetDataTaskController getData;
     private ProgressDialog progressDialog;
 
     @Override
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
         editUser = (EditText) findViewById(R.id.editUsername);
         progressDialog = new ProgressDialog(MainActivity.this);
 
-        getData = new GetDataTask(progressDialog, MainActivity.this);
+        getData = new GetDataTaskController(progressDialog, MainActivity.this);
         getData.mListener = this;
         getData.execute(Common.getAddressAPI());
 
@@ -144,36 +143,23 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
         switch (view.getId()){
             case R.id.btnAdd:
                 /** commented to test json dao and controller */
-//                PostDataTask postDataTask = new PostDataTask(progressDialog, MainActivity.this, editUser.getText().toString());
-//                postDataTask.mListener = MainActivity.this;
-//                postDataTask.execute(Common.getAddressAPI());
-//
-//                getData = new GetData(progressDialog, MainActivity.this);
-//                getData.mListener = MainActivity.this;
-//                getData.execute(Common.getAddressAPI());
-
-//                JsonController jsonController = new JsonController(getAssets());
-//                List<Dustbin> dustbins = jsonController.getDustbinLists();
-//                for (int i = 0; i < dustbins.size(); i++) {
-//                    Dustbin dustbinTest = dustbins.get(i);
-//                }
                 startAddDustbinActivity();
                 break;
             case R.id.btnEdit:
-                PutDataTask putDataTask = new PutDataTask(progressDialog, MainActivity.this, dustbinSelected);
+                PutDataTaskController putDataTask = new PutDataTaskController(progressDialog, MainActivity.this, dustbinSelected);
                 putDataTask.mListener = MainActivity.this;
                 putDataTask.execute(Common.getAddressSingle(dustbinSelected));
 
-                getData = new GetDataTask(progressDialog, MainActivity.this);
+                getData = new GetDataTaskController(progressDialog, MainActivity.this);
                 getData.mListener = MainActivity.this;
                 getData.execute(Common.getAddressAPI());
                 break;
             case R.id.btnDelete:
-                DeleteDataTask deleteDataTask = new DeleteDataTask(progressDialog, MainActivity.this, dustbinSelected);
+                DeleteDataTaskController deleteDataTask = new DeleteDataTaskController(progressDialog, MainActivity.this, dustbinSelected);
                 deleteDataTask.mListener = MainActivity.this;
                 deleteDataTask.execute(Common.getAddressSingle(dustbinSelected));
 
-                getData = new GetDataTask(progressDialog, MainActivity.this);
+                getData = new GetDataTaskController(progressDialog, MainActivity.this);
                 getData.mListener = MainActivity.this;
                 getData.execute(Common.getAddressAPI());
                 break;
@@ -201,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
                 FileReaderController fileReaderController = new FileReaderController(getApplicationContext());
                 dustbins = jsonController.getDustbinLists(downloadedData);
                 CustomAdapter adapter = new CustomAdapter(getApplicationContext(),dustbins);
-                fileWriterController.saveTxtFile(dustbins);
+                fileWriterController.saveTxtFile(dustbins, "data.txt");
                 String result = fileReaderController.readTxtFile("data.txt");
 
 
