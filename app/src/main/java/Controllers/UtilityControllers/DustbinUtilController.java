@@ -25,10 +25,9 @@ public class DustbinUtilController {
     /** getDustbinObject we are not in need of checking coordinates status, we already did
      *  in CoordinateUtilController */
     public Dustbin getDustbinObject() throws MyDustbinException {
-        boolean locationResult = false;
-
+        
         try{
-            locationResult = locationValidation(this.location);
+            locationValidation(this.location);
         } catch (MyDustbinException ex){
             /** exception case handling just for demonstrate*/
 //            switch (ex.getCode().getErrorCode()) {
