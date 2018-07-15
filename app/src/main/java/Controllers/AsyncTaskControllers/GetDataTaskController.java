@@ -1,4 +1,4 @@
-package AsyncTaskControllers;
+package Controllers.AsyncTaskControllers;
 
 /**
  * Created by ILIAS on 6/7/2018.
@@ -11,14 +11,14 @@ import Services.GetService;
 
 
 /** Process Data */
-public class GetDataTask extends AsyncTask<String,Void,String> {
+public class GetDataTaskController extends AsyncTask<String,Void,String> {
 
 
     ProgressDialog progressDialog;
 
     public DownloadTaskListener mListener;
 
-    public GetDataTask(ProgressDialog progressDialog, Context mContext) {
+    public GetDataTaskController(ProgressDialog progressDialog, Context mContext) {
         this.progressDialog = progressDialog;
     }
 

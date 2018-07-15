@@ -1,4 +1,4 @@
-package AsyncTaskControllers;
+package Controllers.AsyncTaskControllers;
 
 /**
  * Created by ILIAS on 6/7/2018.
@@ -13,16 +13,16 @@ import Model.Dustbin;
 import Services.PutService;
 
 /** Edit Data */
-public class PutDataTask extends AsyncTask<String,String,String> {
+public class PutDataTaskController extends AsyncTask<String,String,String> {
 
     ProgressDialog progressDialog;
     Dustbin dustbinSelected;
 
     private Context mContext;
-    private GetDataTask getData;
+    private GetDataTaskController getData;
     public DownloadTaskListener mListener;
 
-    public PutDataTask(ProgressDialog progressDialog, Context mContext, Dustbin dustbinSelected) {
+    public PutDataTaskController(ProgressDialog progressDialog, Context mContext, Dustbin dustbinSelected) {
         this.dustbinSelected = dustbinSelected;
         this.progressDialog = progressDialog;
         this.mContext = mContext;

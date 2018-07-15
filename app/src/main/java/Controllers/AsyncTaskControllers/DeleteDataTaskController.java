@@ -1,4 +1,4 @@
-package AsyncTaskControllers;
+package Controllers.AsyncTaskControllers;
 
 /**
  * Created by ILIAS on 6/7/2018.
@@ -13,7 +13,7 @@ import Model.Dustbin;
 import Services.DeleteService;
 
 /** Delete Data */
-public class DeleteDataTask extends AsyncTask<String,String,String> {
+public class DeleteDataTaskController extends AsyncTask<String,String,String> {
 
     ProgressDialog progressDialog;
     Dustbin dustbin;
@@ -22,7 +22,7 @@ public class DeleteDataTask extends AsyncTask<String,String,String> {
     private GetDataTask getData;
     public DownloadTaskListener mListener;
 
-    public DeleteDataTask(ProgressDialog progressDialog, Context mContext, Dustbin dustbin) {
+    public DeleteDataTaskController(ProgressDialog progressDialog, Context mContext, Dustbin dustbin) {
         this.dustbin = dustbin;
         this.progressDialog = progressDialog;
         this.mContext = mContext;

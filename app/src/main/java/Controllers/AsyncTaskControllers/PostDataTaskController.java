@@ -1,7 +1,6 @@
-package AsyncTaskControllers;
+package Controllers.AsyncTaskControllers;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -13,7 +12,7 @@ import Services.PostService;
  * Created by ILIAS on 6/7/2018.
  */
 
-public class PostDataTask extends AsyncTask<String,String,String> {
+public class PostDataTaskController extends AsyncTask<String,String,String> {
 
     ProgressDialog progressDialog;
     String userName;
@@ -21,17 +20,17 @@ public class PostDataTask extends AsyncTask<String,String,String> {
 
     public DownloadTaskListener mListener;
 
-    public PostDataTask(ProgressDialog progressDialog, String userName) {
+    public PostDataTaskController(ProgressDialog progressDialog, String userName) {
         this.progressDialog = progressDialog;
         this.userName = userName;
     }
 
-    public PostDataTask(ProgressDialog progressDialog, String dustbinLocation, String dustbinLatitude, String dustbinLongitude) {
+    public PostDataTaskController(ProgressDialog progressDialog, String dustbinLocation, String dustbinLatitude, String dustbinLongitude) {
         this.progressDialog = progressDialog;
 
     }
 
-    public PostDataTask(ProgressDialog progressDialog, Dustbin dustbin) {
+    public PostDataTaskController(ProgressDialog progressDialog, Dustbin dustbin) {
         this.progressDialog = progressDialog;
         this.dustbin = dustbin;
     }
