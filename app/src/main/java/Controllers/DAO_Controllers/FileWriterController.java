@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+
+import DAO.FileWriter;
 import Model.Dustbin;
 
 /**
@@ -29,37 +31,10 @@ public class FileWriterController {
     }
 
     public boolean saveTxtFile(List<Dustbin> dustbinsList, String fileName){
+        FileWriter fileWriter = new FileWriter();
         boolean result = false;
-        FileOutputStream fileOutputStream = null;
 
-        try{
-            new File(path).mkdir();
-            File file = new File(path + fileName);
-
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            fileOutputStream = new FileOutputStream(file,true);
-
-            for (Dustbin dustbin: dustbinsList){
-                fileOutputStream.write((dustbin.getLocation() + System.getProperty("line.separator")).getBytes());
-                fileOutputStream.flush();
-            }
-
-            result = true;
-
-        }catch (Exception ex){
-            Log.d(TAG, ex.getMessage());
-        } finally {
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (IOException ex) {
-                    Log.d(TAG, ex.getMessage());
-                }
-            }
-        }
+        result = fileWriter.saveTxtFile(dustbinsList,fileName);
 
         return result;
     }
