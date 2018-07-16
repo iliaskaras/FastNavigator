@@ -17,6 +17,7 @@ import Controllers.AsyncTaskControllers.DeleteDataTaskController;
 import Controllers.AsyncTaskControllers.DownloadTaskListener;
 import Controllers.AsyncTaskControllers.PutDataTaskController;
 import Common.Common;
+import Controllers.AsyncTaskControllers.TaskStrategyContext;
 import Controllers.DAO_Controllers.FileReaderController;
 import Controllers.DAO_Controllers.JsonController;
 import Controllers.DAO_Controllers.FileWriterController;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
     private List<Dustbin> dustbins = new ArrayList<Dustbin>();
     private GetDataTaskController getData;
     private ProgressDialog progressDialog;
+    private TaskStrategyContext taskStrategyContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
         Button btnGoogleMap = (Button) findViewById(R.id.btnGoogleMap);
         Button btnShowUserLocations = (Button) findViewById(R.id.btnLoadYourFile);
 
+        taskStrategyContext = new TaskStrategyContext();
         listView = (ListView)findViewById(R.id.listView);
         editUser = (EditText) findViewById(R.id.editUsername);
         progressDialog = new ProgressDialog(MainActivity.this);
@@ -63,63 +66,39 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
         });
 
         /** Button Listeners initialize */
-        btnAdd.setOnClickListener(this);
         btnEdit.setOnClickListener(this);
         btnDelete.setOnClickListener(this);
-        btnShowUserLocations.setOnClickListener(this);
+        btnAdd.setOnClickListener(this);
+        btnGoogleMap.setOnClickListener(this);
 //        btnAdd.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v) {
-//                postDataTask = new PostDataTask(progressDialog, MainActivity.this,editUser.getText().toString());
-//                postDataTask.mListener = MainActivity.this;
-//                postDataTask.execute(Common.getAddressAPI());
-//
-//                getData = new GetData(progressDialog, MainActivity.this);
-//                getData.mListener = MainActivity.this;
-//                getData.execute(Common.getAddressAPI());
-//
+//                startAddDustbinActivity();
 //            }
 //        });
-//
-//
-//        btnEdit.setOnClickListener(new View.OnClickListener(){
+//        btnGoogleMap.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v) {
-//                putDataTask = new PutDataTask(progressDialog, MainActivity.this, dustbinSelected);
-//                putDataTask.mListener = MainActivity.this;
-//                putDataTask.execute(Common.getAddressSingle(dustbinSelected));
-//
-//                getData = new GetData(progressDialog, MainActivity.this);
-//                getData.mListener = MainActivity.this;
-//                getData.execute(Common.getAddressAPI());
+//                startGoogleMapsActivity();
 //            }
 //        });
-//
-//        btnDelete.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                deleteDataTask = new DeleteDataTask(progressDialog, MainActivity.this, dustbinSelected);
-//                deleteDataTask.mListener = MainActivity.this;
-//                deleteDataTask.execute(Common.getAddressSingle(dustbinSelected));
-//
-//                getData = new GetData(progressDialog, MainActivity.this);
-//                getData.mListener = MainActivity.this;
-//                getData.execute(Common.getAddressAPI());
-//
-//            }
-//        });
-        btnGoogleMap.setOnClickListener(new View.OnClickListener(){
+        btnShowUserLocations.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                startGoogleMapsActivity();
+                loadUserLocations();
             }
         });
 
     }
 
     @Override
-    public void onClick(View v) {
-        asyncTaskFactory(v);
+    public void onClick(View view) {
+        if (view.getId() == R.id.btnEdit || view.getId() == R.id.btnDelete){
+            asyncTaskFactory(view);
+        } else if (view.getId() == R.id.btnAdd || view.getId() == R.id.btnGoogleMap ){
+            openActivityFactory(view);
+        }
+
     }
 
     private void startGoogleMapsActivity(){
@@ -139,36 +118,35 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
 
     }
 
-    private void asyncTaskFactory(View view){
-        switch (view.getId()){
-            case R.id.btnAdd:
-                /** commented to test json dao and controller */
-                startAddDustbinActivity();
-                break;
-            case R.id.btnEdit:
-                PutDataTaskController putDataTask = new PutDataTaskController(progressDialog, MainActivity.this, dustbinSelected);
-                putDataTask.mListener = MainActivity.this;
-                putDataTask.execute(Common.getAddressSingle(dustbinSelected));
+    private void openActivityFactory(View view){
 
-                getData = new GetDataTaskController(progressDialog, MainActivity.this);
-                getData.mListener = MainActivity.this;
-                getData.execute(Common.getAddressAPI());
-                break;
-            case R.id.btnDelete:
-                DeleteDataTaskController deleteDataTask = new DeleteDataTaskController(progressDialog, MainActivity.this, dustbinSelected);
-                deleteDataTask.mListener = MainActivity.this;
-                deleteDataTask.execute(Common.getAddressSingle(dustbinSelected));
-
-                getData = new GetDataTaskController(progressDialog, MainActivity.this);
-                getData.mListener = MainActivity.this;
-                getData.execute(Common.getAddressAPI());
-                break;
-            case R.id.btnLoadYourFile:
-                loadUserLocations();
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.btnAdd){
+            startAddDustbinActivity();
         }
+        if (view.getId() == R.id.btnGoogleMap){
+            startGoogleMapsActivity();
+        }
+
+        resetList();
+    }
+
+    private void asyncTaskFactory(View view){
+
+        if (view.getId() == R.id.btnEdit){
+            taskStrategyContext.setTaskStrategy(new PutDataTaskController(progressDialog, MainActivity.this, dustbinSelected));
+        }
+        if (view.getId() == R.id.btnDelete){
+            taskStrategyContext.setTaskStrategy(new DeleteDataTaskController(progressDialog, MainActivity.this, dustbinSelected));
+        }
+
+        taskStrategyContext.executeStrategy(Common.getAddressSingle(dustbinSelected));
+        resetList();
+    }
+
+    private void resetList(){
+        getData = new GetDataTaskController(progressDialog, MainActivity.this);
+        taskStrategyContext.setTaskStrategy(getData);
+        taskStrategyContext.executeStrategy(Common.getAddressAPI());
     }
 
     @Override
@@ -209,5 +187,39 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
         });
     }
 
-
+//    private void asyncTaskFactory(View view){
+//        switch (view.getId()){
+//            case R.id.btnAdd:
+//                /** commented to test json dao and controller */
+//                startAddDustbinActivity();
+//                break;
+//            case R.id.btnEdit:
+////                PutDataTaskController putDataTask = new PutDataTaskController(progressDialog, MainActivity.this, dustbinSelected);
+////                putDataTask.mListener = MainActivity.this;
+////                putDataTask.execute(Common.getAddressSingle(dustbinSelected));
+//                TaskStrategyContext taskStrategyContext = new TaskStrategyContext();
+//                taskStrategyContext.setOpenNewActivityStrategy(new PutDataTaskController(progressDialog, MainActivity.this, dustbinSelected));
+//                taskStrategyContext.executeStrategy(Common.getAddressSingle(dustbinSelected));
+//
+//                getData = new GetDataTaskController(progressDialog, MainActivity.this);
+//                getData.mListener = MainActivity.this;
+//                getData.execute(Common.getAddressAPI());
+//                break;
+//            case R.id.btnDelete:
+//                DeleteDataTaskController deleteDataTask = new DeleteDataTaskController(progressDialog, MainActivity.this, dustbinSelected);
+//                deleteDataTask.mListener = MainActivity.this;
+//                deleteDataTask.execute(Common.getAddressSingle(dustbinSelected));
+//
+//
+//                getData = new GetDataTaskController(progressDialog, MainActivity.this);
+//                getData.mListener = MainActivity.this;
+//                getData.execute(Common.getAddressAPI());
+//                break;
+//            case R.id.btnLoadYourFile:
+//                loadUserLocations();
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 }
