@@ -18,6 +18,7 @@ public class FileWriter {
     final static String fileName = "data.txt";
     final static String userTxtFile = "userAddedLocations.txt";
     final static String path = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/DAO/";
+
     final static String TAG = FileWriter.class.getName();
 
     public FileWriter() {}
@@ -60,13 +61,15 @@ public class FileWriter {
 
     private File openFile(String fileName){
         File file = null;
-        try {
-            new File(path).mkdir();
-            file = new File(path + fileName);
+        File path = this.mContext.getExternalFilesDir(null);
+        String filePath = null;
 
+        try {
+            file = new File(path , fileName);
             if (!file.exists()) {
                 file.createNewFile();
             }
+            filePath = file.getAbsolutePath();
         } catch (Exception ex){
             Log.d(TAG, ex.getMessage());
         }
