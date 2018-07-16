@@ -1,10 +1,12 @@
 package Model;
 
+import java.io.Serializable;
+
 /**
  * Created by ILIAS on 3/7/2018.
  */
 
-public class Coordinates {
+public class Coordinates implements Serializable{
 
     private double lat;
     private double longitude;
