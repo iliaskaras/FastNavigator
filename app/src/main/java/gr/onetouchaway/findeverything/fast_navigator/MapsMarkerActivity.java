@@ -7,8 +7,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import Model.Dustbin;
 
 /**
  * Created by ILIAS on 10/7/2018.
@@ -16,6 +22,9 @@ import android.support.v7.app.AppCompatActivity;
 
 public class MapsMarkerActivity extends AppCompatActivity
         implements OnMapReadyCallback {
+
+    private List<Dustbin> dustbins = new ArrayList<Dustbin>();
+
     // Include the OnCreate() method here too, as described above.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +36,13 @@ public class MapsMarkerActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        initializeDustbinList();
+    }
+
+    private void initializeDustbinList(){
+        Intent i = getIntent();
+        this.dustbins = (List<Dustbin>) i.getSerializableExtra("dustbins");
     }
 
     @Override
