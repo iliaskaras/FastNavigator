@@ -13,7 +13,7 @@ import Model.Dustbin;
 import Services.PutService;
 
 /** Edit Data */
-public class PutDataTaskController extends AsyncTask<String,String,String> {
+public class PutDataTaskController extends AsyncTask<String,String,String> implements ITaskStrategy {
 
     ProgressDialog progressDialog;
     Dustbin dustbinSelected;
@@ -26,6 +26,7 @@ public class PutDataTaskController extends AsyncTask<String,String,String> {
         this.dustbinSelected = dustbinSelected;
         this.progressDialog = progressDialog;
         this.mContext = mContext;
+        setmListener((DownloadTaskListener)mContext);
     }
 
     @Override
@@ -57,5 +58,19 @@ public class PutDataTaskController extends AsyncTask<String,String,String> {
         putService.PutHTTPData(urlString,json);
 
         return "";
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void executeOnClick(String... params) {
+        this.execute(params);
+    }
+
+    public DownloadTaskListener getmListener() {
+        return mListener;
+    }
+
+    public void setmListener(DownloadTaskListener mListener) {
+        this.mListener = mListener;
     }
 }

@@ -35,7 +35,9 @@ public class FileReader {
         BufferedReader bufferedReader = null;
 
         try {
-            fileInputStream = new FileInputStream (new File(path + fileName));
+//            File path = this.mContext.getFilesDir();
+            File path = this.mContext.getExternalFilesDir(null);
+            fileInputStream = new FileInputStream (new File(path , fileName));
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
             bufferedReader = new BufferedReader(inputStreamReader);
             StringBuilder stringBuilder = new StringBuilder();

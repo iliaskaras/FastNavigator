@@ -1,6 +1,7 @@
 package Controllers.AsyncTaskControllers;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -12,7 +13,7 @@ import Services.PostService;
  * Created by ILIAS on 6/7/2018.
  */
 
-public class PostDataTaskController extends AsyncTask<String,String,String> {
+public class PostDataTaskController extends AsyncTask<String,String,String> implements ITaskStrategy  {
 
     ProgressDialog progressDialog;
     String userName;
@@ -30,9 +31,17 @@ public class PostDataTaskController extends AsyncTask<String,String,String> {
 
     }
 
+    public PostDataTaskController(ProgressDialog progressDialog, Context mContext, Dustbin dustbin) {
+        this.progressDialog = progressDialog;
+        this.dustbin = dustbin;
+        setmListener((DownloadTaskListener)mContext);
+
+    }
+
     public PostDataTaskController(ProgressDialog progressDialog, Dustbin dustbin) {
         this.progressDialog = progressDialog;
         this.dustbin = dustbin;
+
     }
 
     @Override
@@ -72,4 +81,17 @@ public class PostDataTaskController extends AsyncTask<String,String,String> {
         return "";
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void executeOnClick(String... params) {
+        this.execute(params);
+    }
+
+    public DownloadTaskListener getmListener() {
+        return mListener;
+    }
+
+    public void setmListener(DownloadTaskListener mListener) {
+        this.mListener = mListener;
+    }
 }

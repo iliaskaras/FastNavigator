@@ -11,7 +11,7 @@ import Services.GetService;
 
 
 /** Process Data */
-public class GetDataTaskController extends AsyncTask<String,Void,String> {
+public class GetDataTaskController extends AsyncTask<String,Void,String> implements ITaskStrategy {
 
 
     ProgressDialog progressDialog;
@@ -20,6 +20,8 @@ public class GetDataTaskController extends AsyncTask<String,Void,String> {
 
     public GetDataTaskController(ProgressDialog progressDialog, Context mContext) {
         this.progressDialog = progressDialog;
+        setmListener((DownloadTaskListener)mContext);
+
     }
 
     @Override
@@ -29,6 +31,14 @@ public class GetDataTaskController extends AsyncTask<String,Void,String> {
         /** Pre Process */
         progressDialog.setTitle("Please wait...");
         progressDialog.show();
+    }
+
+    public DownloadTaskListener getmListener() {
+        return mListener;
+    }
+
+    public void setmListener(DownloadTaskListener mListener) {
+        this.mListener = mListener;
     }
 
     @Override
@@ -54,4 +64,11 @@ public class GetDataTaskController extends AsyncTask<String,Void,String> {
 
         return stream;
     }
+
+    @Override
+    public void executeOnClick(String... params) {
+        this.execute(params);
+    }
+
+
 }

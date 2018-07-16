@@ -13,19 +13,21 @@ import Model.Dustbin;
 import Services.DeleteService;
 
 /** Delete Data */
-public class DeleteDataTaskController extends AsyncTask<String,String,String> {
+public class DeleteDataTaskController extends AsyncTask<String,String,String> implements ITaskStrategy {
 
     ProgressDialog progressDialog;
     Dustbin dustbin;
 
     private Context mContext;
-    private GetDataTask getData;
+    private GetDataTaskController getData;
     public DownloadTaskListener mListener;
 
     public DeleteDataTaskController(ProgressDialog progressDialog, Context mContext, Dustbin dustbin) {
         this.dustbin = dustbin;
         this.progressDialog = progressDialog;
         this.mContext = mContext;
+        setmListener((DownloadTaskListener)mContext);
+
     }
 
     @Override
@@ -53,5 +55,19 @@ public class DeleteDataTaskController extends AsyncTask<String,String,String> {
         deleteService.DeleteHTTPData(urlString,json);
 
         return "";
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void executeOnClick(String... params) {
+        this.execute(params);
+    }
+
+    public DownloadTaskListener getmListener() {
+        return mListener;
+    }
+
+    public void setmListener(DownloadTaskListener mListener) {
+        this.mListener = mListener;
     }
 }
