@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import Adapters.CustomAdapter;
@@ -103,6 +104,9 @@ public class MainActivity extends AppCompatActivity implements DownloadTaskListe
 
     private void startGoogleMapsActivity(){
         Intent myIntent = new Intent(MainActivity.this, MapsMarkerActivity.class);
+
+        myIntent.putExtra("dustbins", (Serializable) this.dustbins);
+
         MainActivity.this.startActivity(myIntent);
     }
 
