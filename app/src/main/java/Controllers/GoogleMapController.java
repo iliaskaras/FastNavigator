@@ -1,9 +1,14 @@
 package Controllers;
 
+import android.graphics.Color;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 
@@ -52,5 +57,40 @@ public class GoogleMapController {
 
     private boolean dustbinListGiven(List<Dustbin> dustbins){
         return (!dustbins.isEmpty());
+    }
+
+    public void drawRouteOnMap(GoogleMap map, List<LatLng> positions){
+        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+        options.addAll(positions);
+        Polyline polyline = map.addPolyline(options);
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(positions.get(1).latitude, positions.get(1).longitude))
+                .zoom(11)
+                .build();
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    public void manuallyDrawDirection(LatLng foundShortestPath, List<LatLng> latLngList, GoogleMap mMap, List<Dustbin> dustbins){
+        if(latLngList.size() > 2){
+            refreshMap(mMap);
+            resetMap(mMap,dustbins);
+            latLngList.clear();
+        }
+        latLngList.add(dustbins.get(0).getLatLng());
+        latLngList.add(foundShortestPath);
+
+        if(latLngList.size() > 1){
+            drawRouteOnMap(mMap,latLngList);
+        }
+    }
+
+    private void refreshMap(GoogleMap mapInstance){
+        mapInstance.clear();
+    }
+
+    private void resetMap(GoogleMap mapInstance, List<Dustbin> dustbins){
+//        GoogleMapController googleMapController = new GoogleMapController();
+        addMarkersToGoogleMap(mapInstance, dustbins);
+        zoomCameraMap(mapInstance, 10.0f);
     }
 }
