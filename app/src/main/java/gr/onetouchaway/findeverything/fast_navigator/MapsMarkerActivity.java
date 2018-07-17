@@ -7,7 +7,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -16,9 +15,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import Controllers.DijskstraController;
 import Controllers.GoogleMapController;
 import Controllers.UtilityControllers.DustbinUtilController;
 import Model.Dustbin;
@@ -34,6 +37,7 @@ public class MapsMarkerActivity extends AppCompatActivity
     private List<LatLng> latLngList;
     private GoogleMap mMap;
     final static String TAG = MapsMarkerActivity.class.getName();
+    private Marker lastSelectedDustbinLocation;
     // Include the OnCreate() method here too, as described above.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,17 @@ public class MapsMarkerActivity extends AppCompatActivity
 
         initializeDustbinList();
         initializeLatLngMarks();
+
+        Button btnFindShortestPath = (Button) findViewById(R.id.btnFindShortestPath);
+
+        btnFindShortestPath.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                LatLng foundShortestPath = DijskstraController.findShortestPath(dustbins,lastSelectedDustbinLocation);
+                manuallyDrawDirection(foundShortestPath);
+            }
+        });
 
         latLngList = new ArrayList<LatLng>();
 
@@ -71,7 +86,6 @@ public class MapsMarkerActivity extends AppCompatActivity
         googleMapController.zoomCameraMap(googleMap, 10.0f);
 
         mMap = googleMap;
-//        mMap.setOnMapClickListener(this);
         mMap.setOnMarkerClickListener(this);
     }
 
@@ -125,14 +139,13 @@ public class MapsMarkerActivity extends AppCompatActivity
         GoogleMapController googleMapController = new GoogleMapController();
         googleMapController.addMarkersToGoogleMap(mapInstance, this.dustbins);
         googleMapController.zoomCameraMap(mapInstance, 10.0f);
-
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
 
         Log.d(TAG, "MARKER " + marker.getTitle());
-
+        lastSelectedDustbinLocation = marker;
         if(latLngList.size() > 2){
             refreshMap(mMap);
             resetMap(mMap);
@@ -146,5 +159,19 @@ public class MapsMarkerActivity extends AppCompatActivity
         }
 
         return false;
+    }
+
+    private void manuallyDrawDirection(LatLng foundShortestPath){
+        if(latLngList.size() > 2){
+            refreshMap(mMap);
+            resetMap(mMap);
+            latLngList.clear();
+        }
+        latLngList.add(dustbins.get(0).getLatLng());
+        latLngList.add(foundShortestPath);
+
+        if(latLngList.size() > 1){
+            drawRouteOnMap(mMap,latLngList);
+        }
     }
 }
