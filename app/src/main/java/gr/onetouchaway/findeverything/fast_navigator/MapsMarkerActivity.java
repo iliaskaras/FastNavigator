@@ -60,7 +60,10 @@ public class MapsMarkerActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 LatLng foundShortestPath = DijskstraController.findShortestPath(dustbins,lastSelectedDustbinLocation);
-                manuallyDrawDirection(foundShortestPath);
+//                manuallyDrawDirection(foundShortestPath);
+
+                GoogleMapController googleMapController = new GoogleMapController();
+                googleMapController.manuallyDrawDirection(foundShortestPath,latLngList,mMap,dustbins);
             }
         });
 
@@ -155,7 +158,8 @@ public class MapsMarkerActivity extends AppCompatActivity
         latLngList.add(marker.getPosition());
 
         if(latLngList.size() > 1){
-            drawRouteOnMap(mMap,latLngList);
+            GoogleMapController googleMapController = new GoogleMapController();
+            googleMapController.drawRouteOnMap(mMap,latLngList);
         }
 
         return false;
