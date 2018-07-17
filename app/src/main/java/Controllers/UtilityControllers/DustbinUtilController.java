@@ -1,6 +1,11 @@
 package Controllers.UtilityControllers;
 
 import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
+
 import Exceptions.ErrorCodes.ExceptionErrorCodes;
 import Exceptions.MyDustbinException;
 import Model.Coordinates;
@@ -25,7 +30,7 @@ public class DustbinUtilController {
     /** getDustbinObject we are not in need of checking coordinates status, we already did
      *  in CoordinateUtilController */
     public Dustbin getDustbinObject() throws MyDustbinException {
-        
+
         try{
             locationValidation(this.location);
         } catch (MyDustbinException ex){
@@ -61,6 +66,20 @@ public class DustbinUtilController {
         }
 
         return isLocationEntered;
+    }
+
+    public List<Dustbin> initializeLatLngMarks(List<Dustbin> dustbins){
+
+        try{
+            for (Dustbin dustbin : dustbins){
+                LatLng latLng = new LatLng(dustbin.getCoordinates().getLat(),dustbin.getCoordinates().getLongitude());
+                dustbin.setLatLng(latLng);
+            }
+        } catch(NullPointerException ex){
+            Log.d(TAG, ex.getMessage());
+        }
+
+        return dustbins;
     }
 
 }
