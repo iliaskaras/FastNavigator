@@ -3,6 +3,8 @@ package Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by ILIAS on 3/7/2018.
  */
@@ -12,6 +14,7 @@ public class Dustbin implements Parcelable {
     private String location;
     private Id _id;
     private Coordinates coordinates = new Coordinates();
+    private LatLng latLng;
 
     public Dustbin() {
     }
@@ -25,6 +28,25 @@ public class Dustbin implements Parcelable {
         location = in.readString();
         coordinates = (Coordinates) in.readSerializable();
         _id = (Id) in.readSerializable();
+    }
+
+    public Dustbin(String location, Id _id, Coordinates coordinates, LatLng latLng) {
+        this.location = location;
+        this._id = _id;
+        this.coordinates = coordinates;
+        this.latLng = latLng;
+    }
+
+    public LatLng getLatLng() {
+        return latLng;
+    }
+
+    public void setLatLng(LatLng latLng) {
+        this.latLng = latLng;
+    }
+
+    public static Creator<Dustbin> getCREATOR() {
+        return CREATOR;
     }
 
     public static final Creator<Dustbin> CREATOR = new Creator<Dustbin>() {
