@@ -6,10 +6,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import Model.Dustbin;
@@ -22,6 +24,7 @@ public class GoogleMapController {
 
     private GoogleMap googleMap;
     private MarkerOptions options = new MarkerOptions();
+    private Polyline polyline;
 
     public GoogleMapController() {
     }
@@ -70,6 +73,22 @@ public class GoogleMapController {
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    public void drawRouteOnMap(GoogleMap map, LatLng source, LatLng destination){
+        List<LatLng> positions = new ArrayList<>();
+        positions.add(source);
+        positions.add(destination);
+
+        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+        options.addAll(positions);
+        polyline = map.addPolyline(options);
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(source.latitude, source.longitude))
+                .zoom(11)
+                .build();
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+
     public void manuallyDrawDirection(LatLng foundShortestPath, List<LatLng> latLngList, GoogleMap mMap, List<Dustbin> dustbins){
         if(latLngList.size() > 2){
             refreshMap(mMap);
@@ -82,6 +101,12 @@ public class GoogleMapController {
         if(latLngList.size() > 1){
             drawRouteOnMap(mMap,latLngList);
         }
+    }
+
+    public void manuallyDrawDirection(LatLng source, LatLng destination, GoogleMap mMap, List<Dustbin> dustbins){
+        resetMap(mMap,dustbins);
+        if(polyline!=null) polyline.remove();
+        drawRouteOnMap(mMap,source,destination);
     }
 
     private void refreshMap(GoogleMap mapInstance){
