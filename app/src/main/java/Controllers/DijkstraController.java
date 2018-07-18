@@ -11,11 +11,11 @@ import Model.Dustbin;
  * Created by ILIAS on 10/7/2018.
  */
 
-public class DijskstraController {
+public class DijkstraController {
 
 
 
-    public DijskstraController() {
+    public DijkstraController() {
     }
 
     public static LatLng findShortestPath(List<Dustbin> dustbinList, Marker currentDustbinLocation){
@@ -26,5 +26,7 @@ public class DijskstraController {
         return latLng;
 
     }
+
+    private void
 
 }
