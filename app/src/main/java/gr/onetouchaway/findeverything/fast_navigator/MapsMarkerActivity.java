@@ -1,18 +1,13 @@
 package gr.onetouchaway.findeverything.fast_navigator;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,7 +17,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
-import Controllers.DijskstraController;
+import Controllers.DijkstraController;
 import Controllers.GoogleMapController;
 import Controllers.UtilityControllers.DustbinUtilController;
 import Model.Dustbin;
@@ -34,15 +29,14 @@ import Model.Dustbin;
 public class MapsMarkerActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
 
-    private List<Dustbin> dustbins = new ArrayList<Dustbin>();
-    private List<LatLng> latLngList;
-    private GoogleMap mMap;
     final static String TAG = MapsMarkerActivity.class.getName();
+    private List<Dustbin> dustbins = new ArrayList<Dustbin>();
+    private GoogleMap mMap;
     private Marker yourLocationMarker;
     private boolean clickYourLocationClicked = false;
     private Button btnClickYourLocation;
     private GoogleMapController googleMapController;
-    // Include the OnCreate() method here too, as described above.
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,15 +72,12 @@ public class MapsMarkerActivity extends AppCompatActivity
             }
         });
 
-        latLngList = new ArrayList<LatLng>();
-
-
     }
 
     private void findShortestPath(){
-        LatLng foundShortestPath = DijskstraController.findShortestPath(dustbins, yourLocationMarker);
+        LatLng foundShortestPath = DijkstraController.findShortestPath(dustbins, yourLocationMarker);
 
-        googleMapController.manuallyDrawDirection(dustbins.get(0).getLatLng(),foundShortestPath,mMap,dustbins);
+        googleMapController.manuallyDrawDirection(yourLocationMarker.getPosition(),foundShortestPath,mMap,dustbins);
     }
 
     @Override
@@ -98,16 +89,6 @@ public class MapsMarkerActivity extends AppCompatActivity
         mMap.setOnMarkerClickListener(this);
     }
 
-    private void refreshMap(GoogleMap mapInstance){
-        mapInstance.clear();
-    }
-
-    private void resetMap(GoogleMap mapInstance){
-        GoogleMapController googleMapController = new GoogleMapController();
-        googleMapController.addMarkersToGoogleMap(mapInstance, this.dustbins);
-        googleMapController.zoomCameraMap(mapInstance, 10.0f);
-    }
-
     @Override
     public boolean onMarkerClick(Marker marker) {
         if(!clickYourLocationClicked) return false;
@@ -116,26 +97,13 @@ public class MapsMarkerActivity extends AppCompatActivity
             try{
                 yourLocationMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             } catch (Exception ex){
-                Log.d("onMarkerClick exception", ex.getMessage());
+                Log.d(TAG+"onMarkerClick exception", ex.getMessage());
             }
 
         }
 
         yourLocationMarker = marker;
         marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-
-//        Log.d(TAG, "MARKER " + marker.getTitle());
-//        if(latLngList.size() > 1){
-//            refreshMap(mMap);
-//            resetMap(mMap);
-//            latLngList.clear();
-//        }
-//        latLngList.add(marker.getPosition());
-//
-//        if(latLngList.size() > 1){
-//            GoogleMapController googleMapController = new GoogleMapController();
-//            googleMapController.drawRouteOnMap(mMap,latLngList);
-//        }
 
         return false;
     }
