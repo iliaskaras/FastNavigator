@@ -4,6 +4,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -37,7 +38,10 @@ public class MapsMarkerActivity extends AppCompatActivity
     private List<LatLng> latLngList;
     private GoogleMap mMap;
     final static String TAG = MapsMarkerActivity.class.getName();
-    private Marker lastSelectedDustbinLocation;
+    private Marker yourLocationMarker;
+    private boolean clickYourLocationClicked = false;
+    private Button btnClickYourLocation;
+    private GoogleMapController googleMapController;
     // Include the OnCreate() method here too, as described above.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,7 @@ public class MapsMarkerActivity extends AppCompatActivity
 
         initializeDustbinList();
         initializeLatLngMarks();
+        googleMapController = new GoogleMapController();
 
         Button btnFindShortestPath = (Button) findViewById(R.id.btnFindShortestPath);
 
@@ -59,17 +64,97 @@ public class MapsMarkerActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                LatLng foundShortestPath = DijskstraController.findShortestPath(dustbins,lastSelectedDustbinLocation);
-//                manuallyDrawDirection(foundShortestPath);
+                findShortestPath();
+            }
+        });
 
-                GoogleMapController googleMapController = new GoogleMapController();
-                googleMapController.manuallyDrawDirection(foundShortestPath,latLngList,mMap,dustbins);
+        btnClickYourLocation = (Button) findViewById(R.id.btnClickYourLocation);
+
+        btnClickYourLocation.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                btnClickYourLocationClicked(true);
             }
         });
 
         latLngList = new ArrayList<LatLng>();
 
 
+    }
+
+    private void findShortestPath(){
+        LatLng foundShortestPath = DijskstraController.findShortestPath(dustbins, yourLocationMarker);
+
+        googleMapController.manuallyDrawDirection(dustbins.get(0).getLatLng(),foundShortestPath,mMap,dustbins);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        googleMapController.addMarkersToGoogleMap(googleMap, this.dustbins);
+        googleMapController.zoomCameraMap(googleMap, 10.0f);
+
+        mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
+    }
+
+    private void refreshMap(GoogleMap mapInstance){
+        mapInstance.clear();
+    }
+
+    private void resetMap(GoogleMap mapInstance){
+        GoogleMapController googleMapController = new GoogleMapController();
+        googleMapController.addMarkersToGoogleMap(mapInstance, this.dustbins);
+        googleMapController.zoomCameraMap(mapInstance, 10.0f);
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if(!clickYourLocationClicked) return false;
+
+        if(yourLocationMarker != null){
+            try{
+                yourLocationMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            } catch (Exception ex){
+                Log.d("onMarkerClick exception", ex.getMessage());
+            }
+
+        }
+
+        yourLocationMarker = marker;
+        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+
+//        Log.d(TAG, "MARKER " + marker.getTitle());
+//        if(latLngList.size() > 1){
+//            refreshMap(mMap);
+//            resetMap(mMap);
+//            latLngList.clear();
+//        }
+//        latLngList.add(marker.getPosition());
+//
+//        if(latLngList.size() > 1){
+//            GoogleMapController googleMapController = new GoogleMapController();
+//            googleMapController.drawRouteOnMap(mMap,latLngList);
+//        }
+
+        return false;
+    }
+
+
+    private void btnClickYourLocationClicked(boolean isClicked){
+        if(isClicked){
+            clickYourLocationClicked = true;
+            btnClickYourLocation.setClickable(false);
+            btnClickYourLocation.setPressed(true);
+            btnClickYourLocation.setText("Choose your location in map");
+
+        } else {
+            clickYourLocationClicked = false;
+            btnClickYourLocation.setClickable(true);
+            btnClickYourLocation.setPressed(false);
+            btnClickYourLocation.setText("Click your location");
+
+        }
     }
 
     private void initializeDustbinList(){
@@ -81,17 +166,6 @@ public class MapsMarkerActivity extends AppCompatActivity
         DustbinUtilController dustbinUtilController = new DustbinUtilController();
         this.dustbins = dustbinUtilController.initializeLatLngMarks(this.dustbins);
     }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        GoogleMapController googleMapController = new GoogleMapController();
-        googleMapController.addMarkersToGoogleMap(googleMap, this.dustbins);
-        googleMapController.zoomCameraMap(googleMap, 10.0f);
-
-        mMap = googleMap;
-        mMap.setOnMarkerClickListener(this);
-    }
-
 
     @Override
     public void onMapClick(LatLng latLng) {
@@ -120,62 +194,5 @@ public class MapsMarkerActivity extends AppCompatActivity
 //
 //        }
 //        drawRouteOnMap(mMap,latLngList);
-    }
-
-    private void drawRouteOnMap(GoogleMap map, List<LatLng> positions){
-        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
-        options.addAll(positions);
-        Polyline polyline = map.addPolyline(options);
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(positions.get(1).latitude, positions.get(1).longitude))
-                .zoom(11)
-                .build();
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-
-    private void refreshMap(GoogleMap mapInstance){
-        mapInstance.clear();
-    }
-
-    private void resetMap(GoogleMap mapInstance){
-        GoogleMapController googleMapController = new GoogleMapController();
-        googleMapController.addMarkersToGoogleMap(mapInstance, this.dustbins);
-        googleMapController.zoomCameraMap(mapInstance, 10.0f);
-    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-
-        Log.d(TAG, "MARKER " + marker.getTitle());
-        lastSelectedDustbinLocation = marker;
-        if(latLngList.size() > 2){
-            refreshMap(mMap);
-            resetMap(mMap);
-            latLngList.clear();
-        }
-
-        latLngList.add(marker.getPosition());
-
-        if(latLngList.size() > 1){
-            GoogleMapController googleMapController = new GoogleMapController();
-            googleMapController.drawRouteOnMap(mMap,latLngList);
-        }
-
-        return false;
-    }
-
-    private void manuallyDrawDirection(LatLng foundShortestPath){
-        if(latLngList.size() > 2){
-            refreshMap(mMap);
-            resetMap(mMap);
-            latLngList.clear();
-        }
-        latLngList.add(dustbins.get(0).getLatLng());
-        latLngList.add(foundShortestPath);
-
-        if(latLngList.size() > 1){
-            drawRouteOnMap(mMap,latLngList);
-        }
     }
 }
