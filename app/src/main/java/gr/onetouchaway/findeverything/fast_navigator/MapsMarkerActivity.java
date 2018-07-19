@@ -17,7 +17,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
-import Controllers.DijkstraController;
+import Controllers.ShortestDistanceController;
 import Controllers.GoogleMapController;
 import Controllers.UtilityControllers.DustbinUtilController;
 import Model.Dustbin;
@@ -75,7 +75,7 @@ public class MapsMarkerActivity extends AppCompatActivity
     }
 
     private void findShortestPath(){
-        LatLng foundShortestPath = DijkstraController.findShortestPath(dustbins, yourLocationMarker);
+        LatLng foundShortestPath = ShortestDistanceController.findShortestPath(dustbins, yourLocationMarker);
 
         googleMapController.manuallyDrawDirection(yourLocationMarker.getPosition(),foundShortestPath,mMap,dustbins);
     }
