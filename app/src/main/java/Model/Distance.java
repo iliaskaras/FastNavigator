@@ -2,8 +2,6 @@ package Model;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.Comparator;
-
 
 /**
  * Created by ILIAS on 18/7/2018.
