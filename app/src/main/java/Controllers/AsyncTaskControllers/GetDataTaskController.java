@@ -7,6 +7,9 @@ package Controllers.AsyncTaskControllers;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+
+import java.io.IOException;
+
 import Services.GetService;
 
 
@@ -60,7 +63,11 @@ public class GetDataTaskController extends AsyncTask<String,Void,String> impleme
         String urlString = params[0];
 
         GetService getService = new GetService();
-        stream = getService.GetHTTPData(urlString);
+        try {
+            stream = getService.GetHTTPData(urlString);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return stream;
     }
