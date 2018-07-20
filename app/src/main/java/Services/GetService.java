@@ -20,18 +20,22 @@ public class GetService {
     public GetService(){
     }
 
-    public String GetHTTPData(String urlString){
+    public String GetHTTPData(String urlString) throws IOException {
+        HttpURLConnection httpURLConnection = null;
+        InputStream inputStream = null;
+        BufferedReader bufferedReader = null;
+
         try{
             URL url = new URL(urlString);
-            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection = (HttpURLConnection)url.openConnection();
 
             /** Connection status checking
              *  With response code equals to 200 then we are ok. */
-            if(urlConnection.getResponseCode() == 200){
+            if(httpURLConnection.getResponseCode() == 200){
 
-                InputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
+                inputStream = new BufferedInputStream(httpURLConnection.getInputStream());
 
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 StringBuilder stringBuilder = new StringBuilder();
                 String line;
 
@@ -40,14 +44,19 @@ public class GetService {
 
                 stream = stringBuilder.toString();
 
-                urlConnection.disconnect();
-            } else {
-
+                bufferedReader.close();
+                httpURLConnection.disconnect();
             }
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }  finally {
+            if(inputStream!=null){
+                inputStream.close();
+            }
+            if(httpURLConnection!=null){
+                httpURLConnection.disconnect();
+            }
         }
 
         return stream;
