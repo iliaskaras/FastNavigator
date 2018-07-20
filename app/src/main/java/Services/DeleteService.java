@@ -19,31 +19,36 @@ public class DeleteService {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void DeleteHTTPData(String urlString, String json){
+        HttpURLConnection httpURLConnection = null;
+
         try{
             URL url = new URL(urlString);
-            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection = (HttpURLConnection)url.openConnection();
 
-            urlConnection.setRequestMethod("DELETE");
-            urlConnection.setDoOutput(true);
+            httpURLConnection.setRequestMethod("DELETE");
+            httpURLConnection.setDoOutput(true);
 
             byte[] out = json.getBytes(StandardCharsets.UTF_8);
             int length = out.length;
 
-            urlConnection.setFixedLengthStreamingMode(length);
-            urlConnection.setRequestProperty("Content-Type","application/json; charset-UTF-8");
-            urlConnection.connect();
+            httpURLConnection.setFixedLengthStreamingMode(length);
+            httpURLConnection.setRequestProperty("Content-Type","application/json; charset-UTF-8");
+            httpURLConnection.connect();
 
-            try(OutputStream os = urlConnection.getOutputStream()){
+            try(OutputStream os = httpURLConnection.getOutputStream()){
                 os.write(out);
-
             }
 
-            InputStream response = urlConnection.getInputStream();
+            InputStream response = httpURLConnection.getInputStream();
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if(httpURLConnection!=null){
+                httpURLConnection.disconnect();
+            }
         }
 
     }
