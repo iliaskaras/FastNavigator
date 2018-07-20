@@ -20,6 +20,7 @@ import java.util.List;
 import Controllers.ShortestDistanceController;
 import Controllers.GoogleMapController;
 import Controllers.UtilityControllers.DustbinUtilController;
+import Exceptions.MyDistanceException;
 import Model.Dustbin;
 
 /**
@@ -40,10 +41,8 @@ public class MapsMarkerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Retrieve the content view that renders the map.
         setContentView(R.layout.fragment_map);
-        // Get the SupportMapFragment and request notification
-        // when the map is ready to be used.
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -58,7 +57,11 @@ public class MapsMarkerActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                findShortestPath();
+                try {
+                    findShortestPath();
+                } catch (MyDistanceException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -74,7 +77,7 @@ public class MapsMarkerActivity extends AppCompatActivity
 
     }
 
-    private void findShortestPath(){
+    private void findShortestPath() throws MyDistanceException {
         LatLng foundShortestPath = ShortestDistanceController.findShortestPath(dustbins, yourLocationMarker);
 
         googleMapController.manuallyDrawDirection(yourLocationMarker.getPosition(),foundShortestPath,mMap,dustbins);
