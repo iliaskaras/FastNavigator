@@ -6,7 +6,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -109,12 +108,12 @@ public class GoogleMapController {
         drawRouteOnMap(mMap,source,destination);
     }
 
-    private void refreshMap(GoogleMap mapInstance){
+    public void refreshMap(GoogleMap mapInstance){
+        if(mapInstance==null) throw new IllegalArgumentException("you haven't specify map object to clear!");
         mapInstance.clear();
     }
 
     private void resetMap(GoogleMap mapInstance, List<Dustbin> dustbins){
-//        GoogleMapController googleMapController = new GoogleMapController();
         addMarkersToGoogleMap(mapInstance, dustbins);
         zoomCameraMap(mapInstance, 10.0f);
     }
