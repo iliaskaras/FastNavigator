@@ -33,6 +33,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import Adapters.CustomAdapter;
+import Controllers.AsyncTaskControllers.DownloadTaskListener;
+import Controllers.AsyncTaskControllers.PutDataTaskController;
+import Controllers.AsyncTaskControllers.RequestDirectionsTaskController;
+import Controllers.AsyncTaskControllers.TaskStrategyContext;
+import Controllers.DAO_Controllers.FileReaderController;
+import Controllers.DAO_Controllers.FileWriterController;
+import Controllers.DAO_Controllers.JsonController;
 import Controllers.DirectionsParser;
 import Controllers.ShortestDistanceController;
 import Controllers.GoogleMapController;
@@ -45,7 +53,8 @@ import Model.Dustbin;
  */
 
 public class MapsMarkerActivity extends AppCompatActivity
-        implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
+        implements OnMapReadyCallback, GoogleMap.OnMapClickListener,
+                   GoogleMap.OnMarkerClickListener, DownloadTaskListener {
 
     final static String TAG = MapsMarkerActivity.class.getName();
     private List<Dustbin> dustbins = new ArrayList<Dustbin>();
@@ -55,6 +64,7 @@ public class MapsMarkerActivity extends AppCompatActivity
     private boolean locationIsChosed = false;
     private Button btnClickYourLocation;
     private GoogleMapController googleMapController;
+    private TaskStrategyContext taskStrategyContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +77,7 @@ public class MapsMarkerActivity extends AppCompatActivity
 
         initializeDustbinList();
         initializeLatLngMarks();
+        taskStrategyContext = new TaskStrategyContext();
         googleMapController = new GoogleMapController();
 
         Button btnFindShortestPath = (Button) findViewById(R.id.btnFindShortestPath);
@@ -97,13 +108,12 @@ public class MapsMarkerActivity extends AppCompatActivity
 
     private void findShortestPath() throws MyDistanceException {
         LatLng foundShortestDest = ShortestDistanceController.findShortestPath(dustbins, yourLocationMarker);
-
-//        googleMapController.manuallyDrawDirection(yourLocationMarker.getPosition(),foundShortestDest,mMap,dustbins);
-
+        googleMapController.refreshMap(mMap);
+        googleMapController.addMarkersToGoogleMap(mMap,dustbins);
 
         String url = getRequestURL(foundShortestDest, yourLocationMarker.getPosition());
-        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-        taskRequestDirections.execute(url);
+        taskStrategyContext.setTaskStrategy(new RequestDirectionsTaskController( MapsMarkerActivity.this, mMap));
+        taskStrategyContext.executeStrategy(url);
     }
 
     private String getRequestURL(LatLng destination, LatLng origin ){
@@ -121,125 +131,33 @@ public class MapsMarkerActivity extends AppCompatActivity
         //output format
         String output = "json";
 
-        //create url to request "https://maps.google.googleapis.com/maps/api/directions/"
-        String url = "https://maps.google.googleapis.com/maps/api/directions/" + output + "?" + param;
+        //create url to request "https://maps.googleapis.com/maps/api/directions/"
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + param;
 
         return url;
     }
 
-    public class TaskRequestDirections extends AsyncTask<String, Void, String>{
+    @Override
+    public void onDownloadFinish(final String downloadedData) {
+        MapsMarkerActivity.this.runOnUiThread(new Runnable()
+        {
+            public void run()
+            {
 
-        @Override
-        protected String doInBackground(String... params) {
-            String responseString = "";
-            try{
-                responseString = requestDirection(params[0]);
 
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            //Parse json here
-            TaskParser taskParser = new TaskParser();
-            taskParser.execute(s);
-        }
+        });
     }
 
-    public class TaskParser extends AsyncTask<String, Void,  List<List<HashMap<String, String>>>>{
-
-
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... params) {
-            JSONObject jsonObject = null;
-            List<List<HashMap<String, String>>> routes = null;
-            try {
-                jsonObject = new JSONObject(params[0]);
-                DirectionsParser directionsParser = new DirectionsParser();
-                routes = directionsParser.parse(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            return routes;
-        }
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
-            //Get list of routes and display them on map
-
-            ArrayList points = null;
-            PolylineOptions polylineOptions = null;
-
-            for(List<HashMap<String, String>> path : lists){
-                points = new ArrayList();
-                polylineOptions = new PolylineOptions();
-
-                for(HashMap<String, String> point : path){
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lon = Double.parseDouble(point.get("lon"));
-
-                }
-
-                polylineOptions.addAll(points);
-                polylineOptions.width(15);
-                polylineOptions.color(Color.BLUE);
-                polylineOptions.geodesic(true);
+    @Override
+    public void onDownloadProgress(float progress) {
+        MapsMarkerActivity.this.runOnUiThread(new Runnable()
+        {
+            public void run()
+            {
 
             }
-
-            if(polylineOptions!=null){
-                mMap.addPolyline(polylineOptions);
-            } else {
-                Toast.makeText(getApplicationContext(),"direction not found!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private String requestDirection(String reqUrl) throws IOException {
-
-        String responseString = "";
-        InputStream inputStream = null;
-        HttpURLConnection httpURLConnection = null;
-        try{
-            URL url = new URL(reqUrl);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.connect();
-
-            //Get the response request
-            inputStream = httpURLConnection.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            StringBuffer stringBuffer = new StringBuffer();
-            String line = "";
-            while((line = bufferedReader.readLine())!= null){
-                stringBuffer.append(line);
-            }
-
-            responseString = stringBuffer.toString();
-            bufferedReader.close();
-            inputStreamReader.close();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally{
-            if(inputStream != null){
-                inputStream.close();
-            }
-            if(httpURLConnection!=null){
-                httpURLConnection.disconnect();
-            }
-        }
-
-        return responseString;
+        });
     }
 
     @Override
